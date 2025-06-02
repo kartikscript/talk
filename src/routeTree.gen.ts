@@ -13,18 +13,13 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignUpImport } from './routes/sign-up'
 import { Route as SignInImport } from './routes/sign-in'
+import { Route as SavedImport } from './routes/saved'
 import { Route as ProfileImport } from './routes/profile'
 import { Route as MessagesImport } from './routes/messages'
 import { Route as MarketImport } from './routes/market'
 import { Route as BillboardImport } from './routes/billboard'
 import { Route as IndexImport } from './routes/index'
-import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
-import { Route as DemoTableImport } from './routes/demo.table'
-import { Route as DemoStoreImport } from './routes/demo.store'
-import { Route as DemoFormSimpleImport } from './routes/demo.form.simple'
-import { Route as DemoFormAddressImport } from './routes/demo.form.address'
 import { Route as ProductProductIdImport } from './routes/product/$productId'
-
 
 // Create/Update Routes
 
@@ -37,6 +32,12 @@ const SignUpRoute = SignUpImport.update({
 const SignInRoute = SignInImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SavedRoute = SavedImport.update({
+  id: '/saved',
+  path: '/saved',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -69,35 +70,6 @@ const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
-
-
-const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoTableRoute = DemoTableImport.update({
-  id: '/demo/table',
-  path: '/demo/table',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoStoreRoute = DemoStoreImport.update({
-  id: '/demo/store',
-  path: '/demo/store',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoFormSimpleRoute = DemoFormSimpleImport.update({
-  id: '/demo/form/simple',
-  path: '/demo/form/simple',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DemoFormAddressRoute = DemoFormAddressImport.update({
-  id: '/demo/form/address',
-  path: '/demo/form/address',
 
 const ProductProductIdRoute = ProductProductIdImport.update({
   id: '/product/$productId',
@@ -144,6 +116,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileImport
       parentRoute: typeof rootRoute
     }
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedImport
+      parentRoute: typeof rootRoute
+    }
     '/sign-in': {
       id: '/sign-in'
       path: '/sign-in'
@@ -158,41 +137,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignUpImport
       parentRoute: typeof rootRoute
     }
-
-    '/demo/store': {
-      id: '/demo/store'
-      path: '/demo/store'
-      fullPath: '/demo/store'
-      preLoaderRoute: typeof DemoStoreImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/table': {
-      id: '/demo/table'
-      path: '/demo/table'
-      fullPath: '/demo/table'
-      preLoaderRoute: typeof DemoTableImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/form/address': {
-      id: '/demo/form/address'
-      path: '/demo/form/address'
-      fullPath: '/demo/form/address'
-      preLoaderRoute: typeof DemoFormAddressImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/form/simple': {
-      id: '/demo/form/simple'
-      path: '/demo/form/simple'
-      fullPath: '/demo/form/simple'
-      preLoaderRoute: typeof DemoFormSimpleImport
-
     '/product/$productId': {
       id: '/product/$productId'
       path: '/product/$productId'
@@ -211,13 +155,9 @@ export interface FileRoutesByFullPath {
   '/market': typeof MarketRoute
   '/messages': typeof MessagesRoute
   '/profile': typeof ProfileRoute
+  '/saved': typeof SavedRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
   '/product/$productId': typeof ProductProductIdRoute
 }
 
@@ -227,6 +167,7 @@ export interface FileRoutesByTo {
   '/market': typeof MarketRoute
   '/messages': typeof MessagesRoute
   '/profile': typeof ProfileRoute
+  '/saved': typeof SavedRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/product/$productId': typeof ProductProductIdRoute
@@ -239,13 +180,9 @@ export interface FileRoutesById {
   '/market': typeof MarketRoute
   '/messages': typeof MessagesRoute
   '/profile': typeof ProfileRoute
+  '/saved': typeof SavedRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/demo/store': typeof DemoStoreRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
   '/product/$productId': typeof ProductProductIdRoute
 }
 
@@ -257,13 +194,9 @@ export interface FileRouteTypes {
     | '/market'
     | '/messages'
     | '/profile'
+    | '/saved'
     | '/sign-in'
     | '/sign-up'
-    | '/demo/store'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
     | '/product/$productId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -272,13 +205,9 @@ export interface FileRouteTypes {
     | '/market'
     | '/messages'
     | '/profile'
+    | '/saved'
     | '/sign-in'
     | '/sign-up'
-    | '/demo/store'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
     | '/product/$productId'
   id:
     | '__root__'
@@ -287,13 +216,9 @@ export interface FileRouteTypes {
     | '/market'
     | '/messages'
     | '/profile'
+    | '/saved'
     | '/sign-in'
     | '/sign-up'
-    | '/demo/store'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/form/address'
-    | '/demo/form/simple'
     | '/product/$productId'
   fileRoutesById: FileRoutesById
 }
@@ -304,13 +229,9 @@ export interface RootRouteChildren {
   MarketRoute: typeof MarketRoute
   MessagesRoute: typeof MessagesRoute
   ProfileRoute: typeof ProfileRoute
+  SavedRoute: typeof SavedRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
-  DemoStoreRoute: typeof DemoStoreRoute
-  DemoTableRoute: typeof DemoTableRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  DemoFormAddressRoute: typeof DemoFormAddressRoute
-  DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   ProductProductIdRoute: typeof ProductProductIdRoute
 }
 
@@ -320,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketRoute: MarketRoute,
   MessagesRoute: MessagesRoute,
   ProfileRoute: ProfileRoute,
+  SavedRoute: SavedRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   ProductProductIdRoute: ProductProductIdRoute,
@@ -340,6 +262,7 @@ export const routeTree = rootRoute
         "/market",
         "/messages",
         "/profile",
+        "/saved",
         "/sign-in",
         "/sign-up",
         "/product/$productId"
@@ -359,6 +282,9 @@ export const routeTree = rootRoute
     },
     "/profile": {
       "filePath": "profile.tsx"
+    },
+    "/saved": {
+      "filePath": "saved.tsx"
     },
     "/sign-in": {
       "filePath": "sign-in.tsx"

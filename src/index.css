@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Overpass+Mono:wght@300..700&family=Zen+Kaku+Gothic+Antique&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -39,6 +40,21 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --primary: #f48116;
+  --main-bg: #f1f4fe;
+  --warning: #d80811;
+  --dark-text: #000000;
+  --active-white: #fff6f6;
+  --subheading: #6c7293;
+  --secondary-bg: #edeff2;
+  --inactive-grey: #6c7293;
+  --primary-accent: #f9f1e7;
+  --bg-text-2: #3a3a3a;
+  --bg-text: #262626;
+  /* --hover-color: #f4811658; */
+  --hover-color: #f9f1e7;
+  --hova: #ffc188;
+  --big-padding: 0.7rem;
 }
 
 .dark {
@@ -191,4 +207,74 @@
     /* background: #1e2238; */
     background: transparent;
   }
+}
+
+body {
+  background-color: var(--main-bg);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  font-family: 'Zen Kaku Gothic Antique', sans-serif;
+}
+
+.heading-text {
+  font-family: 'Zen Kaku Gothic Antique', sans-serif;
+  font-weight: bold;
+}
+
+.subheading-text {
+  font-family: 'Zen Kaku Gothic Antique', sans-serif;
+  font-weight: 600;
+  font-size: 1.13rem !important;
+}
+
+.regular-text {
+  font-family: 'Zen Kaku Gothic Antique', sans-serif;
+  font-weight: normal;
+}
+
+.active-text {
+  color: var(--primary) !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media only screen and (min-width: 640px) {
+  .event {
+    background-image: none !important;
+  }
+}
+
+.bg-text {
+  color: var(--bg-text);
+}
+
+.primary-text {
+  color: var(--primary);
+}
+
+.normal-text {
+  color: var(--subheading);
+}
+
+.primary-bg {
+  background-color: var(--primary);
+}
+
+.accent-bg {
+  background-color: var(--primary-accent);
+}
+
+.stop-dim {
+  stop-color: white;
+}
+
+.stop-main {
+  stop-color: var(--primary);
 }
