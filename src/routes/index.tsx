@@ -27,7 +27,10 @@ function Index() {
         </div>
         <div className='space-y-4 max-w-lg mx-auto'>
           <EventBanner/>
-          <h1 className="text-lg font-medium tracking-wide">Updates</h1>
+          <div className='flex items-center justify-between'>
+            <h1 className="text-lg font-medium tracking-wide text-main">Updates</h1>
+            <h1 className="text-lg font-medium tracking-wide">Pulse</h1>
+          </div>
           <PostCard/>
           <PostCard/>
           <PostCard/>

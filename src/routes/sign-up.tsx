@@ -38,7 +38,7 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
     try {
       const {confirmPassword,phone,...userData} = values
   
-     const datares= await axios.post('https://talkuat.pythonanywhere.com/api/v1/auth/student-sign-up',userData)
+     const datares= await axios.post('https://talk-l955.onrender.com/api/v1/auth/student-sign-up',userData)
     //  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
     //  const otpres= await axios.post('https://talkuat.pythonanywhere.com/api/v1/auth/verify-user-otp',{otp_code:verificationCode})
       console.log(datares) 
@@ -82,7 +82,9 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
       isValid && setActiveSlide(3)
     }
   }
+  
 
+  const userEmail = form.watch('email')
   const title = activeSlide === 1 ? "Start Your 14-Day Free Trial Today." : activeSlide === 2 ? "Personal Details" : "Select Your Institution"
   const description = activeSlide === 1 ? "No credit card required." : activeSlide === 2 ? "ALMOST THERE!" : "FINAL STEP!"
   return (
@@ -101,7 +103,7 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
         {
           isVerificationOpen ? (
             <div className='flex flex-1 w-full justify-center'>
-              <Verification/>
+              <Verification email={userEmail}/>
             </div>
           ) :(
 
