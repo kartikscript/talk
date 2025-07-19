@@ -1,6 +1,6 @@
 import { Form } from '@/components/ui/form'
 import { UserFormValidation } from '@/lib/validation'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -36,13 +36,15 @@ function SignUp() {
 async function onSubmit (values:z.infer<typeof UserFormValidation>) {
     setIsLoading(true)
     try {
-      const {confirmPassword,phone,...userData} = values
-  
+      const {confirmPassword,phone,registration_number,...userData} = values
+  console.log("User Data:", userData);
      const datares= await axios.post('https://talk-l955.onrender.com/api/v1/auth/student-sign-up',userData)
     //  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
     //  const otpres= await axios.post('https://talkuat.pythonanywhere.com/api/v1/auth/verify-user-otp',{otp_code:verificationCode})
+    if(datares.status === 201) {
+      setisVerificationOpen(true)
+      };     
       console.log(datares) 
-     setisVerificationOpen(true)
     } catch (error:any) {
       if (error.response && error.response.data) {
         const backendErrors = error.response.data;
@@ -84,7 +86,6 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
   }
   
 
-  const userEmail = form.watch('email')
   const title = activeSlide === 1 ? "Start Your 14-Day Free Trial Today." : activeSlide === 2 ? "Personal Details" : "Select Your Institution"
   const description = activeSlide === 1 ? "No credit card required." : activeSlide === 2 ? "ALMOST THERE!" : "FINAL STEP!"
   return (
@@ -103,7 +104,7 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
         {
           isVerificationOpen ? (
             <div className='flex flex-1 w-full justify-center'>
-              <Verification email={userEmail}/>
+              <Verification email={form.watch('email')}/>
             </div>
           ) :(
 
@@ -227,7 +228,7 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
                 <div>
 
                   <span className='block lg:hidden'>
-                   <StatusLine activePage={activeSlide}/>
+                   <StatusLine setActiveSlide={setActiveSlide} activePage={activeSlide}/>
                   </span>
                   
                   <Button onClick={handleNext} type='button' className={`w-full ${activeSlide !== 3 ? "flex items-center" :"hidden!"}  py-5 text-base tracking-wide text-white rounded-lg font-normal mt-3 cursor-pointer bg-main hover:bg-main/90 transition-all duration-200 ease-in-out`}>
@@ -261,7 +262,7 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
           <div className='absolute bottom-0  w-full h-[50%] bg-[#78481C] -skew-y-[35deg]'/>
 
           <span className='hidden lg:block'>
-            <StatusLine activePage={activeSlide}/>
+            <StatusLine activePage={activeSlide} setActiveSlide={setActiveSlide}/>
           </span>
         </aside>
         )

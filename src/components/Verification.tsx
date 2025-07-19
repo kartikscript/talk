@@ -36,7 +36,7 @@ export function Verification({ email }: { email?: string }) {
   const [timeLeft, setTimeLeft] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+console.log("Email in Verification component:", email);
   const timerRef = useRef<NodeJS.Timeout | null>(null); // 🧠 persist timer ID
   const router = useRouter();
   // Countdown logic using useRef
@@ -86,7 +86,10 @@ export function Verification({ email }: { email?: string }) {
         form.reset();
         router.navigate({ to: "/" });
       }
-    } catch (error) {
+    } catch (error:any) {
+      if(error.response?.data?.error) {
+        alert(error.response.data.error);
+      }
       console.log(error);
     } finally {
       setIsLoading(false);
