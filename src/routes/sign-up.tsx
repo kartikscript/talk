@@ -1,6 +1,6 @@
 import { Form } from '@/components/ui/form'
 import { UserFormValidation } from '@/lib/validation'
-import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -104,7 +104,7 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
         {
           isVerificationOpen ? (
             <div className='flex flex-1 w-full justify-center'>
-              <Verification email={form.watch('email')}/>
+              <Verification email={form.watch('email')} password={form.watch('password')} />
             </div>
           ) :(
 

@@ -25,7 +25,7 @@ function RouteComponent() {
   // const { productId } = Route.useLoaderData()
   return (
     <div className='bg-talkBG min-h-screen'>
-      <main>
+      <main className="w-52">
         <h3 className='font-medium'>2020 Apple MacBook Pro with Apple M1 Chip (13-inch, 8GB RAM, 256GB SSD Storage) - Space Gray</h3>
         <div className='flex items-center gap-1 my-4 text-xs tracking-wide'>  
           <div>

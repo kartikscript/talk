@@ -6,11 +6,14 @@ import { UserSignInFormDefaultValues } from '@/lib/constants'
 import { FormFieldType } from '@/lib/types'
 import {  UserSignInFormValidation } from '@/lib/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import axios from 'axios'
 import { Lock, Mail } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import Cookies from 'js-cookie'
+
 
 export const Route = createFileRoute('/sign-in')({
   component: RouteComponent,
@@ -18,7 +21,7 @@ export const Route = createFileRoute('/sign-in')({
 
 function RouteComponent() {
   const [isLoading, setIsLoading] = useState(false)
-
+  const router = useRouter()
   const form = useForm<z.infer<typeof UserSignInFormValidation>>({
     resolver: zodResolver(UserSignInFormValidation),
     defaultValues: UserSignInFormDefaultValues
@@ -33,10 +36,43 @@ function RouteComponent() {
 
     try {
 
-      console.log('data to get saved',values)
+      const {rememberMeConsent,...userData} = values
+      console.log('data to get saved',userData)
+      const datares= await axios.post('https://talk-l955.onrender.com/api/v1/auth/login',userData)
+      console.log(datares)
+      if (datares.status === 200) {
+        const { access, expires_in_secs } = datares.data.token
+
+        const cookieOptions = rememberMeConsent
+          ? { expires: 7 } // 7 days
+          : { expires: parseInt(expires_in_secs) / (60 * 60 * 24) }      // session cookie
+        // Save tokens in cookies
+        Cookies.set('access_token', access, cookieOptions ) // expires in days
+
+        console.log('Tokens saved in cookies')
+
+        router.navigate({ to: '/' })
+      }
+    } catch (error : any) {
+      if (axios.isAxiosError(error)) {
+    const status = error.response?.status
+
+    if (status === 401) {
+      console.error('Unauthorized: Invalid credentials or expired session')
+      // ✅ Optionally show toast or message to user
+      alert('Invalid credentials. Please check your email or password.')
       
-    } catch (error) {
-      console.log(error)
+      // ✅ Or redirect to login if needed
+      // navigate({ to: '/sign-in' })
+    } else {
+      console.error('Unexpected error:', error.response?.data || error.message)
+      alert('Something went wrong. Please try again later.')
+    }
+  } else {
+    console.error('Non-Axios error:', error)
+  }
+    } finally {
+      setIsLoading(false)
     }
 
   }

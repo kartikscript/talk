@@ -18,6 +18,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useRouter } from "@tanstack/react-router";
+import Cookies from "js-cookie";
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -25,7 +26,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function Verification({ email }: { email?: string }) {
+export function Verification({ email, password }: { email?: string, password?: string }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -84,7 +85,20 @@ console.log("Email in Verification component:", email);
       console.log(datares);
       if (datares.data.status === "success") {
         form.reset();
-        router.navigate({ to: "/" });
+        const datares = await axios.post(
+          "https://talk-l955.onrender.com/api/v1/auth/login",
+          { email, password: password }
+        )
+        if (datares.status === 200) {
+        const { access, expires_in_secs } = datares.data.token
+
+        // Save tokens in cookies
+        Cookies.set('access_token', access, { expires: parseInt(expires_in_secs) / (60 * 60 * 24) } ) // expires in days
+
+        console.log('Tokens saved in cookies')
+
+        router.navigate({ to: '/' })
+      }
       }
     } catch (error:any) {
       if(error.response?.data?.error) {

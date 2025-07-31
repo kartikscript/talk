@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
@@ -15,12 +17,25 @@ import { Route as SignUpImport } from './routes/sign-up'
 import { Route as SignInImport } from './routes/sign-in'
 import { Route as ProfileImport } from './routes/profile'
 import { Route as MessagesImport } from './routes/messages'
-import { Route as MarketImport } from './routes/market'
 import { Route as BillboardImport } from './routes/billboard'
 import { Route as IndexImport } from './routes/index'
 import { Route as ProductProductIdImport } from './routes/product/$productId'
+import { Route as MarketLayoutImport } from './routes/market/_layout'
+import { Route as MarketLayoutTakaImport } from './routes/market/_layout/taka'
+import { Route as MarketLayoutServiceImport } from './routes/market/_layout/service'
+import { Route as MarketLayoutProductImport } from './routes/market/_layout/product'
+
+// Create Virtual Routes
+
+const MarketImport = createFileRoute('/market')()
 
 // Create/Update Routes
+
+const MarketRoute = MarketImport.update({
+  id: '/market',
+  path: '/market',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const SignUpRoute = SignUpImport.update({
   id: '/sign-up',
@@ -46,12 +61,6 @@ const MessagesRoute = MessagesImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const MarketRoute = MarketImport.update({
-  id: '/market',
-  path: '/market',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const BillboardRoute = BillboardImport.update({
   id: '/billboard',
   path: '/billboard',
@@ -70,6 +79,29 @@ const ProductProductIdRoute = ProductProductIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const MarketLayoutRoute = MarketLayoutImport.update({
+  id: '/_layout',
+  getParentRoute: () => MarketRoute,
+} as any)
+
+const MarketLayoutTakaRoute = MarketLayoutTakaImport.update({
+  id: '/taka',
+  path: '/taka',
+  getParentRoute: () => MarketLayoutRoute,
+} as any)
+
+const MarketLayoutServiceRoute = MarketLayoutServiceImport.update({
+  id: '/service',
+  path: '/service',
+  getParentRoute: () => MarketLayoutRoute,
+} as any)
+
+const MarketLayoutProductRoute = MarketLayoutProductImport.update({
+  id: '/product',
+  path: '/product',
+  getParentRoute: () => MarketLayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -86,13 +118,6 @@ declare module '@tanstack/react-router' {
       path: '/billboard'
       fullPath: '/billboard'
       preLoaderRoute: typeof BillboardImport
-      parentRoute: typeof rootRoute
-    }
-    '/market': {
-      id: '/market'
-      path: '/market'
-      fullPath: '/market'
-      preLoaderRoute: typeof MarketImport
       parentRoute: typeof rootRoute
     }
     '/messages': {
@@ -123,6 +148,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignUpImport
       parentRoute: typeof rootRoute
     }
+    '/market': {
+      id: '/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketImport
+      parentRoute: typeof rootRoute
+    }
+    '/market/_layout': {
+      id: '/market/_layout'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketLayoutImport
+      parentRoute: typeof MarketRoute
+    }
     '/product/$productId': {
       id: '/product/$productId'
       path: '/product/$productId'
@@ -130,43 +169,101 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductProductIdImport
       parentRoute: typeof rootRoute
     }
+    '/market/_layout/product': {
+      id: '/market/_layout/product'
+      path: '/product'
+      fullPath: '/market/product'
+      preLoaderRoute: typeof MarketLayoutProductImport
+      parentRoute: typeof MarketLayoutImport
+    }
+    '/market/_layout/service': {
+      id: '/market/_layout/service'
+      path: '/service'
+      fullPath: '/market/service'
+      preLoaderRoute: typeof MarketLayoutServiceImport
+      parentRoute: typeof MarketLayoutImport
+    }
+    '/market/_layout/taka': {
+      id: '/market/_layout/taka'
+      path: '/taka'
+      fullPath: '/market/taka'
+      preLoaderRoute: typeof MarketLayoutTakaImport
+      parentRoute: typeof MarketLayoutImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface MarketLayoutRouteChildren {
+  MarketLayoutProductRoute: typeof MarketLayoutProductRoute
+  MarketLayoutServiceRoute: typeof MarketLayoutServiceRoute
+  MarketLayoutTakaRoute: typeof MarketLayoutTakaRoute
+}
+
+const MarketLayoutRouteChildren: MarketLayoutRouteChildren = {
+  MarketLayoutProductRoute: MarketLayoutProductRoute,
+  MarketLayoutServiceRoute: MarketLayoutServiceRoute,
+  MarketLayoutTakaRoute: MarketLayoutTakaRoute,
+}
+
+const MarketLayoutRouteWithChildren = MarketLayoutRoute._addFileChildren(
+  MarketLayoutRouteChildren,
+)
+
+interface MarketRouteChildren {
+  MarketLayoutRoute: typeof MarketLayoutRouteWithChildren
+}
+
+const MarketRouteChildren: MarketRouteChildren = {
+  MarketLayoutRoute: MarketLayoutRouteWithChildren,
+}
+
+const MarketRouteWithChildren =
+  MarketRoute._addFileChildren(MarketRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/billboard': typeof BillboardRoute
-  '/market': typeof MarketRoute
   '/messages': typeof MessagesRoute
   '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/market': typeof MarketLayoutRouteWithChildren
   '/product/$productId': typeof ProductProductIdRoute
+  '/market/product': typeof MarketLayoutProductRoute
+  '/market/service': typeof MarketLayoutServiceRoute
+  '/market/taka': typeof MarketLayoutTakaRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/billboard': typeof BillboardRoute
-  '/market': typeof MarketRoute
   '/messages': typeof MessagesRoute
   '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/market': typeof MarketLayoutRouteWithChildren
   '/product/$productId': typeof ProductProductIdRoute
+  '/market/product': typeof MarketLayoutProductRoute
+  '/market/service': typeof MarketLayoutServiceRoute
+  '/market/taka': typeof MarketLayoutTakaRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/billboard': typeof BillboardRoute
-  '/market': typeof MarketRoute
   '/messages': typeof MessagesRoute
   '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/market': typeof MarketRouteWithChildren
+  '/market/_layout': typeof MarketLayoutRouteWithChildren
   '/product/$productId': typeof ProductProductIdRoute
+  '/market/_layout/product': typeof MarketLayoutProductRoute
+  '/market/_layout/service': typeof MarketLayoutServiceRoute
+  '/market/_layout/taka': typeof MarketLayoutTakaRoute
 }
 
 export interface FileRouteTypes {
@@ -174,54 +271,64 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/billboard'
-    | '/market'
     | '/messages'
     | '/profile'
     | '/sign-in'
     | '/sign-up'
+    | '/market'
     | '/product/$productId'
+    | '/market/product'
+    | '/market/service'
+    | '/market/taka'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/billboard'
-    | '/market'
     | '/messages'
     | '/profile'
     | '/sign-in'
     | '/sign-up'
+    | '/market'
     | '/product/$productId'
+    | '/market/product'
+    | '/market/service'
+    | '/market/taka'
   id:
     | '__root__'
     | '/'
     | '/billboard'
-    | '/market'
     | '/messages'
     | '/profile'
     | '/sign-in'
     | '/sign-up'
+    | '/market'
+    | '/market/_layout'
     | '/product/$productId'
+    | '/market/_layout/product'
+    | '/market/_layout/service'
+    | '/market/_layout/taka'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BillboardRoute: typeof BillboardRoute
-  MarketRoute: typeof MarketRoute
   MessagesRoute: typeof MessagesRoute
   ProfileRoute: typeof ProfileRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  MarketRoute: typeof MarketRouteWithChildren
   ProductProductIdRoute: typeof ProductProductIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BillboardRoute: BillboardRoute,
-  MarketRoute: MarketRoute,
   MessagesRoute: MessagesRoute,
   ProfileRoute: ProfileRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  MarketRoute: MarketRouteWithChildren,
   ProductProductIdRoute: ProductProductIdRoute,
 }
 
@@ -237,11 +344,11 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/billboard",
-        "/market",
         "/messages",
         "/profile",
         "/sign-in",
         "/sign-up",
+        "/market",
         "/product/$productId"
       ]
     },
@@ -250,9 +357,6 @@ export const routeTree = rootRoute
     },
     "/billboard": {
       "filePath": "billboard.tsx"
-    },
-    "/market": {
-      "filePath": "market.tsx"
     },
     "/messages": {
       "filePath": "messages.tsx"
@@ -266,8 +370,35 @@ export const routeTree = rootRoute
     "/sign-up": {
       "filePath": "sign-up.tsx"
     },
+    "/market": {
+      "filePath": "market",
+      "children": [
+        "/market/_layout"
+      ]
+    },
+    "/market/_layout": {
+      "filePath": "market/_layout.tsx",
+      "parent": "/market",
+      "children": [
+        "/market/_layout/product",
+        "/market/_layout/service",
+        "/market/_layout/taka"
+      ]
+    },
     "/product/$productId": {
       "filePath": "product/$productId.tsx"
+    },
+    "/market/_layout/product": {
+      "filePath": "market/_layout/product.tsx",
+      "parent": "/market/_layout"
+    },
+    "/market/_layout/service": {
+      "filePath": "market/_layout/service.tsx",
+      "parent": "/market/_layout"
+    },
+    "/market/_layout/taka": {
+      "filePath": "market/_layout/taka.tsx",
+      "parent": "/market/_layout"
     }
   }
 }
