@@ -1,11 +1,11 @@
-import { Form } from '@/components/ui/form'
+import { Form, FormControl, FormItem, FormLabel } from '@/components/ui/form'
 import { UserFormValidation } from '@/lib/validation'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from 'zod'
-import { Genders, levels, UserFormDefaultValues } from '@/lib/constants'
+import { Genders, Institutions, levels, UserFormDefaultValues } from '@/lib/constants'
 import CustomFormField from '@/components/CustomFormField'
 import { FormFieldType } from '@/lib/types'
 import { GraduationCap, Lock, Mail, User } from 'lucide-react'
@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Verification } from '@/components/Verification'
 import StatusLine from '@/components/StatusLine'
 import axios from 'axios'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 
 export const Route = createFileRoute('/sign-up')({
@@ -36,7 +37,7 @@ function SignUp() {
 async function onSubmit (values:z.infer<typeof UserFormValidation>) {
     setIsLoading(true)
     try {
-      const {confirmPassword,phone,registration_number,...userData} = values
+      const {confirmPassword,phone,isStudent,...userData} = values
   console.log("User Data:", userData);
      const datares= await axios.post('https://talk-l955.onrender.com/api/v1/auth/student-sign-up',userData)
     //  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
@@ -189,12 +190,18 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
                 activeSlide === 3 && (
                   <div>
                     <CustomFormField
-                      control={form.control}
-                      name='university'
-                      fieldType={FormFieldType.INPUT}
-                      placeholder='University'
-                      icon={<GraduationCap/>}
-                    />
+                    control={form.control}
+                    name="institution"
+                    fieldType={FormFieldType.SELECT}
+                    placeholder='Institution'
+                    icon={<GraduationCap/>}
+                  >
+                    {Institutions.map((ins, i) => (
+                      <SelectItem key={i} value={ins} className="cursor-pointer">
+                          <p>{ins}</p>
+                      </SelectItem>
+                    ))}
+                  </CustomFormField>
                     <CustomFormField
                     control={form.control}
                     name="level"
@@ -208,14 +215,57 @@ async function onSubmit (values:z.infer<typeof UserFormValidation>) {
                       </SelectItem>
                     ))}
                   </CustomFormField>
-                  
-                  <CustomFormField
+                    {/* <CustomFormField
                     control={form.control}
-                    name='registration_number'
-                    fieldType={FormFieldType.INPUT}
-                    placeholder='Registration Number'
+                    name="isStudent"
+                    fieldType={FormFieldType.SELECT}
+                    placeholder='Are you a student ?'
                     icon={<GraduationCap/>}
-                  />
+                  >
+                      <SelectItem value='Yes' className="cursor-pointer">
+                          <p>Yes</p>
+                      </SelectItem>
+                      <SelectItem value='No' className="cursor-pointer">
+                          <p>No</p>
+                      </SelectItem>
+                  </CustomFormField> */}
+                  <CustomFormField 
+                    control={form.control}
+                    fieldType={FormFieldType.SKELETON}
+                    name='isStudent'
+                    renderSkeleton={(field) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Are you a student ?</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="flex flex-col"
+                          >
+                            <FormItem className="flex items-center gap-3">
+                              <FormControl>
+                                <RadioGroupItem value="Yes" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                Yes
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center gap-3">
+                              <FormControl>
+                                <RadioGroupItem value="No" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                No
+                              </FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                      </FormItem>
+                      )}
+                    >
+
+                  </CustomFormField>
+                  
                   <CustomFormField
                     fieldType={FormFieldType.CHECKBOX}
                     control={form.control}

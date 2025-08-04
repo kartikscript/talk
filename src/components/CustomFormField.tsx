@@ -18,6 +18,7 @@ import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { FormFieldType } from "@/lib/types";
 import { Eye, EyeOff } from "lucide-react";
+import { Textarea } from "./ui/textarea";
 
 
 interface CustomProps {
@@ -29,10 +30,11 @@ interface CustomProps {
   icon?: React.ReactNode;
   placeholder?: string;
   children?: React.ReactNode;
+   renderSkeleton?: (field: any) => React.ReactNode;
 }
 
 const RenderField = ({ props, field }: { props: CustomProps; field: any }) => {
-  const { fieldType, icon, children } =props;
+  const { fieldType, icon, children, renderSkeleton } =props;
 
   const [showPassword, setShowPassword] = useState(false)
 
@@ -81,7 +83,7 @@ const RenderField = ({ props, field }: { props: CustomProps; field: any }) => {
       return (
         <FormControl>
           <Select value={field.value} onValueChange={field.onChange}  >
-            <SelectTrigger className=" w-full flex justify-start bg-[#EDEFF2] focus-within:border-black/50">
+            <SelectTrigger className=" w-full  text-sm flex justify-start bg-[#EDEFF2] focus-within:border-black/50">
               <div className="ml-2 *:size-5  " >{icon}</div>
               <SelectValue placeholder={props.placeholder}/>
             </SelectTrigger>
@@ -89,9 +91,15 @@ const RenderField = ({ props, field }: { props: CustomProps; field: any }) => {
           </Select>
         </FormControl>
       );
-
+    case FormFieldType.TEXTAREA:
+      return (
+        <FormControl>
+          <Textarea placeholder={props.placeholder} className="h-24 bg-[#EDEFF2] border focus-within:border-black/50 rounded-sm text-sm" {...field} />
+        </FormControl>
+      );
         
-    
+    case FormFieldType.SKELETON:
+      return renderSkeleton ? renderSkeleton(field) : null;
 
 
     default:

@@ -1,29 +1,63 @@
 import { Input } from '@/components/ui/input'
 import { createFileRoute } from '@tanstack/react-router'
 import EventBanner from '@/components/EventBanner'
-import { Search } from 'lucide-react'
+import { PlusIcon, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useSwipeable } from 'react-swipeable'
 import HomeUpdates from '@/components/HomeUpdates'
 import HomePulse from '@/components/HomePulse'
+import Cookies from 'js-cookie'
+import { useRouter } from '@tanstack/react-router'
+import PostForm from '@/components/PostForm'
 
 export const Route = createFileRoute('/')({
   component: Index,
-})
+})  
 
 function Index() {
   const [activeTab, setActiveTab] = useState<'updates' | 'pulse'>('updates')
+  const [showPostPage, setShowPostPage] = useState(false)
+  const router = useRouter()
+ 
+const fetchPosts = async () => {
+  try {
+    const accessToken = Cookies.get('access_token')
 
-  const fetchPosts = async () => {
-    try {
-      const datares = await axios.get('https://talk-l955.onrender.com/api/v1/products/marketplace/list-products/')
-      console.log("Fetched posts:", datares);
-      return datares.data
-    } catch (error) {
-      console.error("Error fetching posts:", error);
+    if (!accessToken) {
+      router.navigate({ to: '/sign-in' })
+      return
+    }
+
+    console.log('Sending request...')
+
+    const datares = await axios.get(
+      'https://talk-l955.onrender.com/api/v1/products/marketplace/list-products/',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+
+    console.log("Fetched posts:", datares)
+    return datares.data
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status
+
+      if (status === 401 || status === 403) {
+        // Invalid or expired token
+        Cookies.remove('access_token') // Optional: clean the token
+        router.navigate({ to: '/sign-in' })
+      } else {
+        console.error(`API Error [${status}]:`, error.response?.data || error.message)
+      }
+    } else {
+      console.error('Unexpected error:', error)
     }
   }
+}
 
   useEffect(() => {
     fetchPosts()
@@ -34,10 +68,11 @@ function Index() {
     onSwipedRight: () => setActiveTab('updates'),
     preventScrollOnSwipe: true,
     trackMouse: true,
+    
   })
 
   return (
-    <div className="flex">
+    <div className="relative flex">
       <div
         {...swipeHandlers}
         className="relative flex-1 bg-talkBG h-[92vh] lg:h-full overflow-auto"
@@ -74,6 +109,14 @@ function Index() {
           </div>
         </main>
       </div>
+      <PlusIcon onClick={()=>setShowPostPage(true)} className='p-2 size-8 cursor-pointer border shadow rounded-lg fixed right-10 bottom-10'/>
+      {showPostPage && (
+        <div onClick={()=>setShowPostPage(false)} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div onClick={(e)=>e.stopPropagation()} className="bg-white p-4 overflow-y-scroll max-h-[95%] rounded-lg shadow-lg max-w-md w-full">
+            <PostForm />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
